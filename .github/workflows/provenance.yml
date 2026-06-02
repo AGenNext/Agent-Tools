@@ -1,0 +1,30 @@
+name: Build provenance
+
+# Builds the worker binary and generates a signed SLSA build-provenance
+# attestation via GitHub's first-party attestation service. This is the trust
+# model in action: the platform owner (GitHub) verifies our build. Verify with:
+#   gh attestation verify dist/worker --repo AGenNext/Agent-Tools
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  build:
+    name: Build & attest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build worker
+        run: |
+          go version
+          CGO_ENABLED=0 go build -trimpath -o dist/worker ./cmd/worker
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: dist/worker
