@@ -15,6 +15,22 @@ These tools compose: **podman** (or Docker) can back a **kind** cluster, and
 `podman kube generate` produces manifests you can apply to a **kind** or
 **k3s** cluster.
 
+## Orchestrator
+
+These tools are also exposed as **Orkes Conductor** workers so an agent can chain
+them into durable, multi-step workflows. `cmd/worker` registers each tool
+(`podman`, `kind`, `k3s`) as a Conductor task worker. See
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full layering
+(Conductor for orchestration, Go workers as capabilities, Cortex for
+operational excellence — and why Temporal is deferred).
+
+```bash
+export CONDUCTOR_SERVER_URL=https://play.orkes.io/api
+export CONDUCTOR_AUTH_KEY=...
+export CONDUCTOR_AUTH_SECRET=...
+go run ./cmd/worker
+```
+
 ## Layout
 
 ```
