@@ -1,0 +1,35 @@
+# Tool-Card: registers the `k3s` agent tool in the Cortex catalog (the
+# tool-registry) via GitOps. Discovered automatically by Cortex.
+# NOTE: the custom entity type `agent-tool` must exist in Cortex
+# (Settings -> Entity Types) before the first GitOps sync.
+openapi: 3.0.1
+info:
+  title: k3s
+  x-cortex-tag: tool-k3s
+  description: >-
+    Lightweight, single-binary CNCF-certified Kubernetes distribution for
+    edge/CI/VM. Exposed as the Conductor task `k3s`; runs the k3s CLI with an
+    `args` array and returns stdout/stderr/exitCode.
+  x-cortex-type: agent-tool
+  x-cortex-groups:
+    - agent-tools
+    - kubernetes
+  x-cortex-owners:
+    - type: group
+      name: agent-tools-team
+      provider: CORTEX
+  x-cortex-git:
+    github:
+      repository: AGenNext/Agent-Tools
+      basepath: skills/k3s
+  x-cortex-link:
+    - name: Skill / Runbook
+      type: runbook
+      url: https://github.com/AGenNext/Agent-Tools/blob/main/skills/k3s/SKILL.md
+  x-cortex-custom-metadata:
+    conductor-task: k3s
+    binary: k3s
+    category: kubernetes
+    version: 1.0.0
+    capabilities: server, agent, kubectl, cluster-init-ha, crictl
+    input-schema: '{ "args": [string], "timeoutSeconds": number?, "stdin": string? }'

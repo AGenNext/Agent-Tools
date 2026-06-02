@@ -40,9 +40,10 @@ func main() {
 	pollInterval := getenvDuration("WORKER_POLL_INTERVAL", time.Second)
 
 	taskRunner := worker.NewTaskRunnerWithApiClient(apiClient)
-	for taskName, fn := range tools.Registry {
-		taskRunner.StartWorker(taskName, fn, batchSize, pollInterval)
-		log.Printf("registered agent-tool worker %q (batch=%d, poll=%s)", taskName, batchSize, pollInterval)
+	for taskName, tool := range tools.Registry {
+		taskRunner.StartWorker(taskName, tool.Worker, batchSize, pollInterval)
+		log.Printf("registered agent-tool worker %q v%s (capabilities=%v, batch=%d, poll=%s)",
+			taskName, tool.Version, tool.Capabilities, batchSize, pollInterval)
 	}
 
 	log.Printf("polling %s for tasks; press Ctrl+C to stop", serverURL)

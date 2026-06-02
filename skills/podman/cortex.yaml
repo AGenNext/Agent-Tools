@@ -1,0 +1,35 @@
+# Tool-Card: registers the `podman` agent tool in the Cortex catalog (the
+# tool-registry) via GitOps. Discovered automatically by Cortex.
+# NOTE: the custom entity type `agent-tool` must exist in Cortex
+# (Settings -> Entity Types) before the first GitOps sync.
+openapi: 3.0.1
+info:
+  title: podman
+  x-cortex-tag: tool-podman
+  description: >-
+    Daemonless, rootless-capable, Docker-compatible OCI container engine.
+    Exposed as the Conductor task `podman`; runs the podman CLI with an `args`
+    array and returns stdout/stderr/exitCode.
+  x-cortex-type: agent-tool
+  x-cortex-groups:
+    - agent-tools
+    - container-runtime
+  x-cortex-owners:
+    - type: group
+      name: agent-tools-team
+      provider: CORTEX
+  x-cortex-git:
+    github:
+      repository: AGenNext/Agent-Tools
+      basepath: skills/podman
+  x-cortex-link:
+    - name: Skill / Runbook
+      type: runbook
+      url: https://github.com/AGenNext/Agent-Tools/blob/main/skills/podman/SKILL.md
+  x-cortex-custom-metadata:
+    conductor-task: podman
+    binary: podman
+    category: container-runtime
+    version: 1.0.0
+    capabilities: build, run, images, pods, kube-generate, push
+    input-schema: '{ "args": [string], "timeoutSeconds": number?, "stdin": string? }'
