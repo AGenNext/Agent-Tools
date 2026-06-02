@@ -26,10 +26,24 @@ info:
     - name: Skill / Runbook
       type: runbook
       url: https://github.com/AGenNext/Agent-Tools/blob/main/skills/podman/SKILL.md
+    - name: Changelog (v5.8.2)
+      type: documentation
+      url: https://github.com/containers/podman/releases/tag/v5.8.2
   x-cortex-custom-metadata:
     conductor-task: podman
     binary: podman
     category: container-runtime
-    version: 1.0.0
+    publisher: containers (Red Hat)
+    verified-by: GitHub (platform owner — signed tags / verified releases / provenance)
+    version: v5.8.2
+    changelog: https://github.com/containers/podman/releases/tag/v5.8.2
+    certification: >-
+      Version and capabilities are as claimed by the publisher (see changelog).
+      Verifying those claims is, everywhere, the platform owner's responsibility
+      and duty (currently GitHub), and Agent-Tools trusts the platform owner as
+      the verification authority. Agent-Tools certifies only that this entry
+      references the platform-hosted source; it does not publish, warrant, or
+      independently verify the tool. When Agent-Tools operates its own platform,
+      it will assume the platform owner's verification duty.
     capabilities: build, run, images, pods, kube-generate, push
     input-schema: '{ "args": [string], "timeoutSeconds": number?, "stdin": string? }'

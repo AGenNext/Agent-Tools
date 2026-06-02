@@ -26,10 +26,24 @@ info:
     - name: Skill / Runbook
       type: runbook
       url: https://github.com/AGenNext/Agent-Tools/blob/main/skills/k3s/SKILL.md
+    - name: Changelog (v1.36.1+k3s1)
+      type: documentation
+      url: https://github.com/k3s-io/k3s/releases/tag/v1.36.1+k3s1
   x-cortex-custom-metadata:
     conductor-task: k3s
     binary: k3s
     category: kubernetes
-    version: 1.0.0
+    publisher: k3s-io (SUSE/Rancher)
+    verified-by: GitHub (platform owner — signed tags / verified releases / provenance)
+    version: v1.36.1+k3s1
+    changelog: https://github.com/k3s-io/k3s/releases/tag/v1.36.1+k3s1
+    certification: >-
+      Version and capabilities are as claimed by the publisher (see changelog).
+      Verifying those claims is, everywhere, the platform owner's responsibility
+      and duty (currently GitHub), and Agent-Tools trusts the platform owner as
+      the verification authority. Agent-Tools certifies only that this entry
+      references the platform-hosted source; it does not publish, warrant, or
+      independently verify the tool. When Agent-Tools operates its own platform,
+      it will assume the platform owner's verification duty.
     capabilities: server, agent, kubectl, cluster-init-ha, crictl
     input-schema: '{ "args": [string], "timeoutSeconds": number?, "stdin": string? }'
