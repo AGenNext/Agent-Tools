@@ -21,6 +21,7 @@ apps:
     publisher: conductor-oss / Orkes
     verified-by: GitHub
     docs: https://orkes.io/content/category/sdks
+    alternatives: [Temporal, Cadence, Apache Airflow, AWS Step Functions]  # no-blocker rule
     tools:
       - name: Go SDK
         type: sdk
@@ -64,6 +65,7 @@ apps:
     publisher: Temporal Technologies
     verified-by: GitHub
     docs: https://docs.temporal.io/encyclopedia/temporal-sdks
+    alternatives: [Orkes Conductor, Cadence, Apache Airflow, AWS Step Functions]  # no-blocker rule
     tools:
       - name: Go SDK
         type: sdk
@@ -115,6 +117,7 @@ apps:
     publisher: Cortex (cortexapps)
     verified-by: GitHub
     docs: https://docs.cortex.io
+    alternatives: [Backstage, OpsLevel, Port, Atlassian Compass]  # no-blocker rule
     notes: >-
       Cortex.io does not publish language SDKs; integrate via REST API + GitOps.
       No official CLI confirmed for cortex.io (the "Cortex Code CLI" search hits

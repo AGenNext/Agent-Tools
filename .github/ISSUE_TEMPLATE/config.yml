@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contribution guide
+    url: https://github.com/AGenNext/Agent-Tools/blob/main/CONTRIBUTING.md
+    about: How to add or change a tool, and the rules CI enforces.
+  - name: Taxonomy & rules
+    url: https://github.com/AGenNext/Agent-Tools/blob/main/docs/TAXONOMY.md
+    about: Controlled vocabulary and the invariants every entry must satisfy.

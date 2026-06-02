@@ -1,38 +1,14 @@
 package tools
 
 import (
-	"bytes"
 	"context"
-	"errors"
 	"fmt"
-	"os/exec"
-	"strings"
-	"time"
 
 	"github.com/conductor-sdk/conductor-go/sdk/model"
 )
 
-// Result is the standard output shape returned by every agent-tool worker.
-// It is serialized into the Conductor task output, so downstream tasks in a
-// workflow can branch on ExitCode or parse Stdout.
-type Result struct {
-	Binary   string   `json:"binary"`
-	Args     []string `json:"args"`
-	ExitCode int      `json:"exitCode"`
-	Stdout   string   `json:"stdout"`
-	Stderr   string   `json:"stderr"`
-}
-
-// DefaultTimeout bounds any single tool invocation that doesn't specify its
-// own "timeoutSeconds" input.
-const DefaultTimeout = 5 * time.Minute
-
-// run executes a fixed binary with the args supplied in the task input. We
-// invoke the binary directly (no shell) so user-supplied args cannot inject
-// additional commands. A non-zero exit is NOT treated as a Go error — the exit
-// code is surfaced in the Result so workflows can decide how to react; a Go
-// error is reserved for "couldn't run at all" cases (binary missing, timeout,
-// bad input).
+// run adapts a Conductor task to the engine-agnostic executor (see exec.go). It
+// decodes the recognized task inputs and delegates to Run.
 //
 // Recognized task inputs:
 //
@@ -45,47 +21,17 @@ func run(binary string, t *model.Task) (interface{}, error) {
 		return nil, fmt.Errorf("invalid %q input: %w", "args", err)
 	}
 
-	timeout := DefaultTimeout
+	in := Invocation{Args: args}
 	if v, ok := t.InputData["timeoutSeconds"]; ok {
-		if secs, ok := toInt(v); ok && secs > 0 {
-			timeout = time.Duration(secs) * time.Second
+		if secs, ok := toInt(v); ok {
+			in.TimeoutSeconds = secs
 		}
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-
-	cmd := exec.CommandContext(ctx, binary, args...)
-	if stdin, ok := t.InputData["stdin"].(string); ok && stdin != "" {
-		cmd.Stdin = strings.NewReader(stdin)
+	if stdin, ok := t.InputData["stdin"].(string); ok {
+		in.Stdin = stdin
 	}
 
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	exitCode := 0
-	if runErr := cmd.Run(); runErr != nil {
-		var exitErr *exec.ExitError
-		if errors.As(runErr, &exitErr) {
-			// The process ran but returned non-zero. Report it via the Result.
-			exitCode = exitErr.ExitCode()
-		} else {
-			// Couldn't start (binary not found), timed out, etc.
-			if ctx.Err() == context.DeadlineExceeded {
-				return nil, fmt.Errorf("%s timed out after %s", binary, timeout)
-			}
-			return nil, fmt.Errorf("failed to run %s: %w (stderr: %s)", binary, runErr, strings.TrimSpace(stderr.String()))
-		}
-	}
-
-	return Result{
-		Binary:   binary,
-		Args:     args,
-		ExitCode: exitCode,
-		Stdout:   stdout.String(),
-		Stderr:   stderr.String(),
-	}, nil
+	return Run(context.Background(), binary, in)
 }
 
 // stringSlice coerces a JSON-decoded value into []string. Conductor decodes

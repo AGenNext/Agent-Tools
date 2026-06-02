@@ -1,0 +1,32 @@
+name: Change or bug report
+description: Update an existing entry (version bump, deprecation) or report a problem
+title: "[change] <summary>"
+labels: ["triage"]
+body:
+  - type: input
+    id: entry
+    attributes:
+      label: Affected tool / app
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type of change
+      options: [version-bump, deprecation, correction, bug, other]
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: For a version bump, include the new real version and its changelog URL.
+    validations:
+      required: true
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Rule acknowledgement
+      options:
+        - label: Any new version is real and its changelog points at exactly that release (no fabrication)
+          required: true

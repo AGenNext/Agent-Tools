@@ -46,4 +46,5 @@ info:
       independently verify the tool. When Agent-Tools operates its own platform,
       it will assume the platform owner's verification duty.
     capabilities: server, agent, kubectl, cluster-init-ha, crictl
+    alternatives: kind, k3d, minikube, microk8s, kubeadm  # Agent-Tools editorial; no-blocker rule
     input-schema: '{ "args": [string], "timeoutSeconds": number?, "stdin": string? }'

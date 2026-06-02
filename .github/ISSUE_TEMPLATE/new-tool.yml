@@ -1,0 +1,74 @@
+name: Propose a tool
+description: Add a new tool or integration surface to the registry
+title: "[tool] <name>"
+labels: ["new-tool"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Entries must satisfy the rules in
+        [docs/TAXONOMY.md](https://github.com/AGenNext/Agent-Tools/blob/main/docs/TAXONOMY.md).
+        Provide real, publisher-sourced values — do not invent versions.
+  - type: input
+    id: name
+    attributes:
+      label: Tool name
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Kind (type)
+      options: [capability, sdk, cli, mcp, gitops, api]
+    validations:
+      required: true
+  - type: input
+    id: publisher
+    attributes:
+      label: Publisher (who makes the claims)
+    validations:
+      required: true
+  - type: input
+    id: verified_by
+    attributes:
+      label: Verified by (platform owner — e.g. GitHub)
+      value: GitHub
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version (real published release)
+      placeholder: vX.Y.Z
+  - type: input
+    id: changelog
+    attributes:
+      label: Changelog URL (must point at exactly that version)
+  - type: input
+    id: capabilities
+    attributes:
+      label: Capabilities (comma-separated, publisher-claimed)
+    validations:
+      required: true
+  - type: input
+    id: alternatives
+    attributes:
+      label: Alternatives (comma-separated, ≥1 — no-blocker rule)
+    validations:
+      required: true
+  - type: dropdown
+    id: provenance
+    attributes:
+      label: Provenance
+      options: [official, community]
+    validations:
+      required: true
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Rule acknowledgement
+      options:
+        - label: This tool declares at least one alternative (no-blocker rule)
+          required: true
+        - label: The version is real and the changelog points at exactly that release (no fabrication)
+          required: true

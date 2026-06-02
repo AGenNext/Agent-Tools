@@ -39,6 +39,10 @@ type Tool struct {
 	// Capabilities are AS CLAIMED BY THE PUBLISHER for this Version, not
 	// independently verified by Agent-Tools.
 	Capabilities []string
+	// Alternatives are substitute tools in the same category. Unlike the other
+	// fields, this is AGENT-TOOLS' OWN EDITORIAL ASSESSMENT — not a publisher
+	// claim and not platform-verified — to help consumers choose.
+	Alternatives []string
 	Worker       model.ExecuteTaskFunction
 }
 
@@ -54,6 +58,7 @@ var Registry = map[string]Tool{
 		VerifiedBy:   "GitHub",
 		Changelog:    "https://github.com/containers/podman/releases/tag/v5.8.2",
 		Capabilities: []string{"build", "run", "images", "pods", "kube-generate", "push"},
+		Alternatives: []string{"docker", "nerdctl", "buildah", "containerd"},
 		Worker:       Podman,
 	},
 	"kind": {
@@ -64,6 +69,7 @@ var Registry = map[string]Tool{
 		VerifiedBy:   "GitHub",
 		Changelog:    "https://github.com/kubernetes-sigs/kind/releases/tag/v0.32.0",
 		Capabilities: []string{"cluster-create", "cluster-delete", "load-image", "multi-node", "export-kubeconfig"},
+		Alternatives: []string{"k3d", "minikube", "microk8s", "k3s"},
 		Worker:       Kind,
 	},
 	"k3s": {
@@ -74,6 +80,7 @@ var Registry = map[string]Tool{
 		VerifiedBy:   "GitHub",
 		Changelog:    "https://github.com/k3s-io/k3s/releases/tag/v1.36.1+k3s1",
 		Capabilities: []string{"server", "agent", "kubectl", "cluster-init-ha", "crictl"},
+		Alternatives: []string{"kind", "k3d", "minikube", "microk8s", "kubeadm"},
 		Worker:       K3s,
 	},
 }
