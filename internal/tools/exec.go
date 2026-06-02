@@ -61,13 +61,21 @@ func Run(ctx context.Context, binary string, in Invocation) (Result, error) {
 
 	exitCode := 0
 	if runErr := cmd.Run(); runErr != nil {
+		// A context timeout/cancel kills the process, which surfaces as an
+		// *exec.ExitError. Check the context FIRST so a timeout isn't masked as
+		// an ordinary non-zero exit (which would let a hung `k3s server` or
+		// `podman build` look like a completed task).
+		switch {
+		case ctx.Err() == context.DeadlineExceeded:
+			return Result{}, fmt.Errorf("%s timed out after %s", binary, timeout)
+		case ctx.Err() == context.Canceled:
+			return Result{}, fmt.Errorf("%s canceled: %w", binary, ctx.Err())
+		}
+
 		var exitErr *exec.ExitError
 		if errors.As(runErr, &exitErr) {
 			exitCode = exitErr.ExitCode()
 		} else {
-			if ctx.Err() == context.DeadlineExceeded {
-				return Result{}, fmt.Errorf("%s timed out after %s", binary, timeout)
-			}
 			return Result{}, fmt.Errorf("failed to run %s: %w (stderr: %s)", binary, runErr, strings.TrimSpace(stderr.String()))
 		}
 	}
