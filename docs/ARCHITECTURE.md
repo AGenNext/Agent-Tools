@@ -1,43 +1,56 @@
 # Agent-Tools Architecture
 
 This repo turns container / Kubernetes capabilities (podman, kind, k3s) into
-**orchestrated agent tools**. The system is layered so each technology owns a
-distinct concern — and so we don't run two overlapping workflow engines.
+**orchestrated agent tools**. The system is layered so each concern is owned by
+the right component, and every SDK in the stack stays available — none is
+removed.
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│  OPERATIONAL EXCELLENCE        →  Cortex (IDP)             │
-│  catalog every tool-worker as a service, ownership,       │
+│  OPERATIONAL EXCELLENCE   →  Cortex (IDP)                  │
+│  catalog every tool as an entity, ownership,              │
 │  scorecards (runbook? healthy? on-call?), standards       │
 ├──────────────────────────────────────────────────────────┤
-│  ORCHESTRATION / EXECUTION     →  Conductor                │
-│  durable, multi-step workflows that chain the tools       │
+│  ORCHESTRATION / EXECUTION                                 │
+│    • Orkes Conductor  — declarative workflows, polled      │
+│                         workers, visual run history        │
+│    • Temporal         — code-first durable execution,      │
+│                         long-running stateful sagas        │
 ├──────────────────────────────────────────────────────────┤
-│  CAPABILITIES (agent tools)    →  Go workers               │
+│  CAPABILITIES (agent tools)  →  Go workers / activities    │
 │  podman / kind / k3s — run the CLI, return stdout/exit     │
 └──────────────────────────────────────────────────────────┘
 ```
 
-## Why one workflow engine, not two
+## SDKs
 
-Orkes **Conductor** and **Temporal** occupy the *same* layer — both are durable
-workflow / execution engines. Running both ("Conductor orchestrates, Temporal
-executes") means two servers, two SDKs, and two failure models for marginal
-benefit.
+All SDKs below are part of the stack and remain supported. The same shell-free
+tool runner (`internal/tools`) backs every binding, so a tool is written once
+and exposed through whichever engine a workflow needs.
 
-For this project each tool is a discrete, pollable capability that an agent
-composes into pipelines, so **Conductor** is the chosen engine: declarative
-workflows, each tool is a registered worker, trivial to add tools, full visual
-run history.
+| SDK / platform | Module / source | Role | Status |
+|---|---|---|---|
+| **Orkes Conductor Go SDK** | `github.com/conductor-sdk/conductor-go` | Orchestration + execution: each tool is a registered Conductor worker (`cmd/worker`). | Implemented |
+| **Temporal Go SDK** | `go.temporal.io/sdk` | Code-first durable execution: each tool is exposed as a Temporal Activity for long-running, stateful, retried/heartbeated sagas. | Planned (same runner, Activity binding) |
+| **Cortex** | GitOps (`cortex.yaml`) + REST API | Operational excellence / IDP: catalogs the tools and runs scorecards. Never executes work. | Implemented (GitOps Tool-Cards) |
+| **Orkes Conductor metadata API** | via the Conductor Go SDK | Registers task & workflow definitions on the server. | Planned |
 
-**Temporal is deferred.** Add it only if a single tool operation becomes a
-complex, long-running, stateful saga (retries / heartbeats / human approval
-over hours–days). At that point a Conductor task can delegate to a Temporal
-workflow — a bridge to cross when a concrete tool needs it, not before.
+### Why both Conductor and Temporal (not either/or)
 
-**Cortex** is *not* a duplicate of either — it never executes work. It is the
-Internal Developer Portal layer: it catalogs the tool-workers as services and
-runs scorecards for operational excellence.
+They cover different sweet spots, so both are kept:
+
+- **Conductor** — declarative, polyglot, polled workers, visual run history;
+  ideal for composing tools into visible pipelines and adding tools cheaply.
+- **Temporal** — code-first workflows-as-Go with strong durability primitives
+  (timers, signals, heartbeats); ideal when a single tool operation is a
+  long-running, stateful saga (hours–days, human-in-the-loop).
+
+A Conductor workflow can delegate a heavy step to a Temporal workflow when that
+step needs Temporal's durability — the two compose rather than compete.
+
+**Cortex** is not a workflow engine at all — it never executes work. It is the
+Internal Developer Portal layer that catalogs the tools and runs scorecards for
+operational excellence.
 
 ## Trust & certification model
 
@@ -120,8 +133,12 @@ implemented.
 
 1. **Done** — agent-tool workers + Conductor task runner (`internal/tools`, `cmd/worker`).
 2. **Done** — Cortex GitOps Tool-Cards for every tool (`cortex.yaml`, `skills/*/cortex.yaml`), stamped with publisher, platform-verifier, version, changelog, and capabilities.
-3. **Next** — Cortex scorecards over the catalogued tools (ownership, runbook, health).
-4. **Aspiration (soon)** — Agent-Tools operates its own platform and *becomes the
+3. **Done** — complete app integration catalog: every SDK (all languages), CLI,
+   and MCP server for Conductor, Temporal, and Cortex catalogued in
+   [`catalog/apps.yaml`](../catalog/apps.yaml) / [`docs/CATALOG.md`](CATALOG.md).
+4. **Next** — Temporal Go SDK binding: expose the same tool runner as Temporal
+   Activities (kept as a first-class engine, not deferred).
+5. **Next** — Cortex scorecards over the catalogued tools (ownership, runbook, health).
+6. **Aspiration (soon)** — Agent-Tools operates its own platform and *becomes the
    verifier*, assuming the platform owner's verification duty (signed releases /
    provenance / attestations) instead of delegating it to an external platform.
-5. **Deferred** — Temporal, only if a tool needs code-first long-running saga semantics.
