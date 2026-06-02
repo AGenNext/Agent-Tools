@@ -69,6 +69,27 @@ Concretely: a Tool-Card's `version` and `capabilities` are **as claimed by the
 publisher**; the `changelog` is the platform-hosted evidence; and we trust the
 platform owner (GitHub) to have verified it.
 
+**Integration mode decides who validates.** *How* we consume a tool changes
+where validation responsibility sits:
+
+| Integration mode | Example | Who validates |
+|---|---|---|
+| **API / MCP** (called over the wire) | Conductor/Temporal/Cortex MCP servers, REST APIs | External official surface — verification stays with the **platform owner**. We ship none of their code. |
+| **SDK** (compiled into our build) | `conductor-sdk/conductor-go` in `go.mod` | Enters **our supply chain** — validation responsibility shifts to **Agent-Tools** (pin in `go.sum`, Dependabot, vuln scanning). |
+
+This is why the repo runs Dependabot and why we bump vulnerable transitive deps
+(e.g. `protobuf` → v1.34.2): we *use* the Conductor Go SDK, so we own its
+validation. MCP and API entries are official external tools and carry no such
+build-time obligation.
+
+**Design preference: MCP / API over SDK.** Wherever a capability is reachable
+over the wire, prefer the platform's MCP server or API to embedding its SDK.
+This (a) keeps validation with the platform owner, (b) shrinks our supply chain,
+and (c) keeps the audit trail clean: **the action is logged with Agent-Tools as
+the actor and the platform (GitHub, Conductor, …) as the tool**, rather than us
+re-shipping their code. Reach for an SDK only when no MCP/API path exists or the
+work must run in-process.
+
 **Where we're headed (and hope to soon):** when Agent-Tools operates its own
 platform, it *becomes* the platform owner and assumes the verification duty
 itself, rather than delegating it to an external platform. Until then, we trust
