@@ -1,0 +1,51 @@
+# Tool-Card template — copy to skills/<tool>/cortex.yaml and fill in.
+# Must satisfy the rules in docs/TAXONOMY.md (validated in CI):
+#   - version: a REAL published release (pin via `git ls-remote`); do not invent
+#   - changelog: URL pointing at exactly that release
+#   - capabilities + alternatives: at least one each (no-blocker rule)
+#   - certification text left as-is (publisher claims / platform verifies)
+# NOTE: the custom entity type `agent-tool` must exist in Cortex before sync.
+openapi: 3.0.1
+info:
+  title: <tool-name>
+  x-cortex-tag: tool-<tool-name>
+  description: >-
+    <one-line description; exposed as the Conductor task `<tool-name>`>
+  x-cortex-type: agent-tool
+  x-cortex-groups:
+    - agent-tools
+    - <category>            # container-runtime | kubernetes | ...
+  x-cortex-owners:
+    - type: group
+      name: agent-tools-team
+      provider: CORTEX
+  x-cortex-git:
+    github:
+      repository: AGenNext/Agent-Tools
+      basepath: skills/<tool-name>
+  x-cortex-link:
+    - name: Skill / Runbook
+      type: runbook
+      url: https://github.com/AGenNext/Agent-Tools/blob/main/skills/<tool-name>/SKILL.md
+    - name: Changelog (<version>)
+      type: documentation
+      url: <publisher changelog URL for exactly this version>
+  x-cortex-custom-metadata:
+    conductor-task: <tool-name>
+    binary: <binary>
+    category: <category>
+    publisher: <publisher>
+    verified-by: GitHub (platform owner — signed tags / verified releases / provenance)
+    version: <vX.Y.Z — real, from publisher>
+    changelog: <publisher changelog URL for exactly this version>
+    certification: >-
+      Version and capabilities are as claimed by the publisher (see changelog).
+      Verifying those claims is, everywhere, the platform owner's responsibility
+      and duty (currently GitHub), and Agent-Tools trusts the platform owner as
+      the verification authority. Agent-Tools certifies only that this entry
+      references the platform-hosted source; it does not publish, warrant, or
+      independently verify the tool. When Agent-Tools operates its own platform,
+      it will assume the platform owner's verification duty.
+    capabilities: <cap1, cap2, ...>                 # >= 1 (publisher-claimed)
+    alternatives: <alt1, alt2, ...>                 # >= 1 (Agent-Tools editorial; no-blocker rule)
+    input-schema: '{ "args": [string], "timeoutSeconds": number?, "stdin": string? }'

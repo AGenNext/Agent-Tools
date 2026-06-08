@@ -1,0 +1,139 @@
+# Agent-Tools catalog of integration tools for the orchestration / IDP apps in
+# the stack. In this registry EVERY integration surface — SDK, CLI, or MCP
+# server — is itself a tool.
+#
+# Each entry records what the vendor PUBLISHES. Per the trust model in
+# docs/ARCHITECTURE.md:
+#   - publisher  : who ships/claims the tool
+#   - verified-by: the platform owner whose duty it is to verify the source
+#                  (e.g. GitHub — signed tags / releases / provenance)
+#   - provenance : official (vendor-maintained) vs community (third-party)
+# Agent-Tools certifies that an entry references the vendor source; it does not
+# itself verify or warrant the tool.
+#
+# NOTE on the name "Cortex": this catalog's Cortex is the cortex.io Internal
+# Developer Portal (cortexapps). It is UNRELATED to Snowflake Cortex or Palo
+# Alto Cortex, which share the name; those are intentionally excluded.
+
+apps:
+  - name: Orkes Conductor
+    role: orchestration + execution — declarative durable workflows, polled workers
+    publisher: conductor-oss / Orkes
+    verified-by: GitHub
+    docs: https://orkes.io/content/category/sdks
+    alternatives: [Temporal, Cadence, Apache Airflow, AWS Step Functions]  # no-blocker rule
+    tools:
+      - name: Go SDK
+        type: sdk
+        language: go
+        module: github.com/conductor-sdk/conductor-go
+        source: https://orkes.io/content/sdks/golang
+        provenance: official
+        status: integrated
+      - name: Python SDK
+        type: sdk
+        language: python
+        source: https://orkes.io/content/sdks/python
+        provenance: official
+      - name: Java SDK
+        type: sdk
+        language: java
+        source: https://orkes.io/content/sdks/java
+        provenance: official
+      - name: JavaScript / TypeScript SDK
+        type: sdk
+        language: javascript
+        source: https://orkes.io/content/sdks/javascript
+        provenance: official
+      - name: C# SDK
+        type: sdk
+        language: csharp
+        source: https://orkes.io/content/category/sdks
+        provenance: official
+      - name: Clojure SDK
+        type: sdk
+        language: clojure
+        source: https://orkes.io/content/category/sdks
+        provenance: official
+      - name: Conductor MCP Server
+        type: mcp
+        source: https://github.com/conductor-oss/conductor-mcp
+        provenance: official
+
+  - name: Temporal
+    role: code-first durable execution — long-running stateful sagas
+    publisher: Temporal Technologies
+    verified-by: GitHub
+    docs: https://docs.temporal.io/encyclopedia/temporal-sdks
+    alternatives: [Orkes Conductor, Cadence, Apache Airflow, AWS Step Functions]  # no-blocker rule
+    tools:
+      - name: Go SDK
+        type: sdk
+        language: go
+        module: go.temporal.io/sdk
+        source: https://github.com/temporalio/sdk-go
+        provenance: official
+      - name: Java SDK
+        type: sdk
+        language: java
+        source: https://github.com/temporalio/sdk-java
+        provenance: official
+      - name: TypeScript SDK
+        type: sdk
+        language: typescript
+        source: https://github.com/temporalio/sdk-typescript
+        provenance: official
+      - name: Python SDK
+        type: sdk
+        language: python
+        source: https://github.com/temporalio/sdk-python
+        provenance: official
+      - name: .NET SDK
+        type: sdk
+        language: dotnet
+        source: https://github.com/temporalio/sdk-dotnet
+        provenance: official
+      - name: PHP SDK
+        type: sdk
+        language: php
+        source: https://github.com/temporalio/sdk-php
+        provenance: official
+      - name: Ruby SDK
+        type: sdk
+        language: ruby
+        source: https://github.com/temporalio/sdk-ruby
+        provenance: official
+      - name: Temporal CLI
+        type: cli
+        source: https://github.com/temporalio/cli
+        provenance: official
+      - name: Temporal MCP Server
+        type: mcp
+        source: https://temporal.io/code-exchange/temporal-mcp-server
+        provenance: community (Temporal Code Exchange)
+
+  - name: Cortex (cortex.io IDP)
+    role: operational excellence / internal developer portal — catalog, scorecards
+    publisher: Cortex (cortexapps)
+    verified-by: GitHub
+    docs: https://docs.cortex.io
+    alternatives: [Backstage, OpsLevel, Port, Atlassian Compass]  # no-blocker rule
+    notes: >-
+      Cortex.io does not publish language SDKs; integrate via REST API + GitOps.
+      No official CLI confirmed for cortex.io (the "Cortex Code CLI" search hits
+      belong to Snowflake Cortex, a different product).
+    tools:
+      - name: GitOps entity descriptors (cortex.yaml)
+        type: gitops
+        source: https://docs.cortex.io/configure/gitops
+        provenance: official
+        status: integrated
+      - name: REST API
+        type: api
+        source: https://docs.cortex.io
+        provenance: official
+      - name: Cortex MCP Server
+        type: mcp
+        source: https://github.com/cortexapps/cortex-mcp
+        docs: https://docs.cortex.io/get-started/mcp
+        provenance: official

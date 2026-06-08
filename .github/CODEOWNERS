@@ -1,0 +1,7 @@
+# Registry governance — these areas should be reviewed for rule compliance
+# (taxonomy, no-blocker, certification). Adjust the owner to your team/handle.
+*                       @AGenNext/agent-tools-team
+/catalog/               @AGenNext/agent-tools-team
+/skills/                @AGenNext/agent-tools-team
+/docs/TAXONOMY.md       @AGenNext/agent-tools-team
+/scripts/               @AGenNext/agent-tools-team

@@ -1,0 +1,50 @@
+# Tool-Card: registers the `kind` agent tool in the Cortex catalog (the
+# tool-registry) via GitOps. Discovered automatically by Cortex.
+# NOTE: the custom entity type `agent-tool` must exist in Cortex
+# (Settings -> Entity Types) before the first GitOps sync.
+openapi: 3.0.1
+info:
+  title: kind
+  x-cortex-tag: tool-kind
+  description: >-
+    Kubernetes IN Docker — disposable clusters running inside Docker/Podman
+    containers. Exposed as the Conductor task `kind`; runs the kind CLI with an
+    `args` array and returns stdout/stderr/exitCode.
+  x-cortex-type: agent-tool
+  x-cortex-groups:
+    - agent-tools
+    - kubernetes
+  x-cortex-owners:
+    - type: group
+      name: agent-tools-team
+      provider: CORTEX
+  x-cortex-git:
+    github:
+      repository: AGenNext/Agent-Tools
+      basepath: skills/kind
+  x-cortex-link:
+    - name: Skill / Runbook
+      type: runbook
+      url: https://github.com/AGenNext/Agent-Tools/blob/main/skills/kind/SKILL.md
+    - name: Changelog (v0.32.0)
+      type: documentation
+      url: https://github.com/kubernetes-sigs/kind/releases/tag/v0.32.0
+  x-cortex-custom-metadata:
+    conductor-task: kind
+    binary: kind
+    category: kubernetes
+    publisher: kubernetes-sigs
+    verified-by: GitHub (platform owner — signed tags / verified releases / provenance)
+    version: v0.32.0
+    changelog: https://github.com/kubernetes-sigs/kind/releases/tag/v0.32.0
+    certification: >-
+      Version and capabilities are as claimed by the publisher (see changelog).
+      Verifying those claims is, everywhere, the platform owner's responsibility
+      and duty (currently GitHub), and Agent-Tools trusts the platform owner as
+      the verification authority. Agent-Tools certifies only that this entry
+      references the platform-hosted source; it does not publish, warrant, or
+      independently verify the tool. When Agent-Tools operates its own platform,
+      it will assume the platform owner's verification duty.
+    capabilities: cluster-create, cluster-delete, load-image, multi-node, export-kubeconfig
+    alternatives: k3d, minikube, microk8s, k3s  # Agent-Tools editorial; no-blocker rule
+    input-schema: '{ "args": [string], "timeoutSeconds": number?, "stdin": string? }'

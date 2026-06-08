@@ -1,0 +1,50 @@
+# Tool-Card: registers the `k3s` agent tool in the Cortex catalog (the
+# tool-registry) via GitOps. Discovered automatically by Cortex.
+# NOTE: the custom entity type `agent-tool` must exist in Cortex
+# (Settings -> Entity Types) before the first GitOps sync.
+openapi: 3.0.1
+info:
+  title: k3s
+  x-cortex-tag: tool-k3s
+  description: >-
+    Lightweight, single-binary CNCF-certified Kubernetes distribution for
+    edge/CI/VM. Exposed as the Conductor task `k3s`; runs the k3s CLI with an
+    `args` array and returns stdout/stderr/exitCode.
+  x-cortex-type: agent-tool
+  x-cortex-groups:
+    - agent-tools
+    - kubernetes
+  x-cortex-owners:
+    - type: group
+      name: agent-tools-team
+      provider: CORTEX
+  x-cortex-git:
+    github:
+      repository: AGenNext/Agent-Tools
+      basepath: skills/k3s
+  x-cortex-link:
+    - name: Skill / Runbook
+      type: runbook
+      url: https://github.com/AGenNext/Agent-Tools/blob/main/skills/k3s/SKILL.md
+    - name: Changelog (v1.36.1+k3s1)
+      type: documentation
+      url: https://github.com/k3s-io/k3s/releases/tag/v1.36.1+k3s1
+  x-cortex-custom-metadata:
+    conductor-task: k3s
+    binary: k3s
+    category: kubernetes
+    publisher: k3s-io (SUSE/Rancher)
+    verified-by: GitHub (platform owner — signed tags / verified releases / provenance)
+    version: v1.36.1+k3s1
+    changelog: https://github.com/k3s-io/k3s/releases/tag/v1.36.1+k3s1
+    certification: >-
+      Version and capabilities are as claimed by the publisher (see changelog).
+      Verifying those claims is, everywhere, the platform owner's responsibility
+      and duty (currently GitHub), and Agent-Tools trusts the platform owner as
+      the verification authority. Agent-Tools certifies only that this entry
+      references the platform-hosted source; it does not publish, warrant, or
+      independently verify the tool. When Agent-Tools operates its own platform,
+      it will assume the platform owner's verification duty.
+    capabilities: server, agent, kubectl, cluster-init-ha, crictl
+    alternatives: kind, k3d, minikube, microk8s, kubeadm  # Agent-Tools editorial; no-blocker rule
+    input-schema: '{ "args": [string], "timeoutSeconds": number?, "stdin": string? }'

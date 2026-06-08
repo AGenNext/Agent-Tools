@@ -1,0 +1,25 @@
+openapi: 3.0.1
+info:
+  title: Agent Tools Orchestrator
+  x-cortex-tag: agent-tools-orchestrator
+  description: >-
+    Orkes Conductor task runner that registers each container/Kubernetes agent
+    tool (podman, kind, k3s) as a worker and polls for work. See cmd/worker.
+  x-cortex-type: service
+  x-cortex-groups:
+    - agent-tools
+  x-cortex-owners:
+    - type: group
+      name: agent-tools-team
+      provider: CORTEX
+  x-cortex-git:
+    github:
+      repository: AGenNext/Agent-Tools
+      basepath: cmd/worker
+  x-cortex-link:
+    - name: Architecture
+      type: documentation
+      url: https://github.com/AGenNext/Agent-Tools/blob/main/docs/ARCHITECTURE.md
+  x-cortex-custom-metadata:
+    orchestrator: orkes-conductor
+    language: go
