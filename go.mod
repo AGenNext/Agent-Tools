@@ -2,7 +2,7 @@ module github.com/AGenNext/Agent-Tools
 
 go 1.24.7
 
-require github.com/conductor-sdk/conductor-go v1.9.0
+require github.com/conductor-sdk/conductor-go v1.10.2
 
 require (
 	github.com/antihax/optional v1.0.0 // indirect
